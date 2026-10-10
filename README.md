@@ -1,54 +1,53 @@
-# Cinema Ticketing System — Softverski sistem za praćenje rada bioskopa
+# Cinema Ticketing System
 
-Klijent-server aplikacija za prodaju bioskopskih karata, izrađena kao seminarski rad iz predmeta **Projektovanje softvera** na Fakultetu organizacionih nauka (FON), Univerzitet u Beogradu.
+A client–server desktop application for selling cinema tickets, built as a course project for **Software Design** at the Faculty of Organizational Sciences (FON), University of Belgrade.
 
-Sistem omogućava kasiru da se prijavi, upravlja mušterijama i projekcijama, i kreira / pretražuje / menja / stornira račune, kroz troslojnu (3-tier) klijent-server arhitekturu sa komunikacijom preko soketa.
+A cashier logs in, manages customers and screenings, and creates / searches / edits / cancels receipts, all over a three-tier client–server architecture communicating through sockets.
 
-## Tehnologije
-- **Java** (Swing za grafički korisnički interfejs)
-- **Socket** komunikacija (klijent ↔ server)
-- **MySQL / MariaDB** (XAMPP) + **JDBC** (MySQL Connector/J)
-- **NetBeans** razvojno okruženje
+## Tech stack
+- **Java** (Swing for the GUI)
+- **Socket** communication (client ↔ server)
+- **MySQL / MariaDB** + **JDBC** (MySQL Connector/J)
+- **NetBeans** IDE
 
-## Arhitektura
-Sistem čine tri NetBeans projekta:
+## Architecture
+The system is split into three NetBeans projects:
 
-| Projekat | Uloga |
+| Project | Responsibility |
 |---|---|
-| **BioskopZajednicki** | Domenske klase + transfer objekti (dele ih klijent i server) |
-| **BioskopServer** | Broker baze, sistemske operacije (SO), kontroler, niti, serverska forma |
-| **BioskopKlijent** | Swing forme, table modeli, klijentski kontroler |
+| **BioskopZajednicki** (Common) | Domain classes + transfer objects, shared by client and server |
+| **BioskopServer** (Server) | Database broker, system operations (SO), controller, threads, server form |
+| **BioskopKlijent** (Client) | Swing forms, table models, client controller |
 
-Ključni obrasci: `AbstractDomainObject` (generički SQL preko domenskih klasa), `AbstractSO` (template metoda validate → execute → commit/rollback), `DBBroker` (Singleton), `Request`/`Response` preko soketa.
+Key patterns: `AbstractDomainObject` (each domain class provides its own SQL fragments, so the DB broker stays generic), `AbstractSO` (template method: validate → execute → commit/rollback), `DBBroker` (Singleton), and `Request`/`Response` objects serialized over sockets.
 
-## Funkcionalnosti
-- Prijava kasira (autentifikacija preko korisničkog imena i šifre)
-- **Mušterija** — Kreiraj / Pretraži / Promeni / Obriši
-- **Projekcija** — Kreiraj / Pretraži / Promeni / Obriši
-- **Račun** — Kreiraj (sa stavkama) / Pretraži / Promeni / Storniraj
-- Pretraga iz baze po zadatim kriterijumima (`WHERE` se gradi na serverskoj strani)
-- Šifarnik Starosno doba
+## Features
+- Cashier authentication (username + password)
+- **Customer** — create / search / update / delete
+- **Screening** — create / search / update / delete
+- **Receipt** — create (with line items) / search / update / cancel (storno)
+- Database-driven search by criteria (the `WHERE` clause is built server-side)
+- Age-group reference data (lookup list)
 
-## Baza podataka
-Šema baze je u fajlu [`bioskop_db.sql`](bioskop_db.sql). Importuje se u MySQL/MariaDB (npr. preko SQLyog, phpMyAdmin ili `mysql` CLI).
+## Database
+The schema is in [`bioskop_db.sql`](bioskop_db.sql). Import it into MySQL/MariaDB (e.g. via SQLyog, phpMyAdmin or the `mysql` CLI).
 
-Tabele: `kasir`, `musterija`, `projekcija`, `racun`, `stavkaracuna`, `starosnodoba`, `zadruga`, `zaposlenje`.
+Tables: `kasir` (cashier), `musterija` (customer), `projekcija` (screening), `racun` (receipt), `stavkaracuna` (receipt item), `starosnodoba` (age group), `zadruga` (cooperative), `zaposlenje` (employment).
 
-## Pokretanje
-1. Pokreni MySQL/MariaDB (npr. XAMPP) i importuj `bioskop_db.sql`.
-2. Dodaj bar jednog kasira u tabelu `kasir` (potrebno za prijavu).
-3. Otvori sva tri projekta u NetBeans-u.
-4. U projektima **BioskopServer** i **BioskopKlijent**: `Properties → Libraries → Add Project →` **BioskopZajednicki**.
-5. U **BioskopServer** dodaj i **MySQL Connector/J** (`.jar`) kao biblioteku.
-6. Podesi `BioskopServer/dbconfig.properties` (url / username / password tvoje baze).
-7. Pokreni **server** (`forms.ServerForm` → Pokreni server, port 9000).
-8. Pokreni **klijent** (`forme.LoginForma`) i prijavi se.
+## Getting started
+1. Start MySQL/MariaDB (e.g. XAMPP) and import `bioskop_db.sql`.
+2. Insert at least one row into the `kasir` table (required for login).
+3. Open all three projects in NetBeans.
+4. In **BioskopServer** and **BioskopKlijent**: `Properties → Libraries → Add Project →` **BioskopZajednicki**.
+5. In **BioskopServer**, also add the **MySQL Connector/J** `.jar` as a library.
+6. Configure `BioskopServer/dbconfig.properties` (url / username / password).
+7. Run the **server** (`forms.ServerForm` → Start server, port 9000).
+8. Run the **client** (`forme.LoginForma`) and log in.
 
-> **Napomena:** MySQL Connector/J (`.jar`) nije uključen u repozitorijum — preuzmi ga sa [dev.mysql.com](https://dev.mysql.com/downloads/connector/j/) i dodaj kao biblioteku.
+> **Note:** The MySQL Connector/J `.jar` is not included in the repository — download it from [dev.mysql.com](https://dev.mysql.com/downloads/connector/j/) and add it as a library.
 
-## Dokumentacija
-Kompletna projektna dokumentacija (verbalni opis, slučajevi korišćenja, sistemske operacije, sekvencni dijagrami, ugovori, konceptualni i relacioni model, projektovanje) nalazi se u fajlu `NaslovnaSadrzaj-DjordjePopovic-2021-0266.doc`.
+## Documentation
+Full project documentation (verbal description, use cases, system operations, sequence diagrams, contracts, conceptual and relational models, and design) is in `NaslovnaSadrzaj-DjordjePopovic-2021-0266.doc` (in Serbian).
 
-## Autor
-**Đorđe Popović** — 2021/0266
-Projektovanje softvera, FON
+## Author
+**Đorđe Popović** — Software Design, FON
