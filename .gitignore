@@ -1,0 +1,23 @@
+# Tudji seminarski radovi - NE kacuju se
+/avio/
+/novo obuca/
+*.zip
+
+# Dijagrami i tudja dokumentacija (PDF je tudji)
+*.drawio
+*.pdf
+
+# Biblioteke (zavisnosti su navedene u README)
+*.jar
+
+# NetBeans build artefakti i privatna podesavanja
+build/
+dist/
+nbproject/private/
+
+# Microsoft Word lock fajlovi
+~$*
+
+# OS
+Thumbs.db
+.DS_Store
